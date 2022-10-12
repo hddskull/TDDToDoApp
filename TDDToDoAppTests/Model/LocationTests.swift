@@ -6,6 +6,9 @@
 //
 
 import XCTest
+import CoreLocation
+@testable import TDDToDoApp
+
 
 final class LocationTests: XCTestCase {
 
@@ -16,20 +19,23 @@ final class LocationTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    
+    func testInitSetsName() {
+        let location = Location(name: "Foo")
+        XCTAssertEqual(location.name, "Foo")
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testInitSetsCoordinates() {
+        let coordinate = CLLocationCoordinate2D(
+            latitude: 1,
+            longitude: 2
+        )
+        
+        let location = Location(name: "Foo", coordinate: coordinate)
+        
+        XCTAssertEqual(location.coordinate?.latitude, coordinate.latitude)
+        XCTAssertEqual(location.coordinate?.longitude, coordinate.longitude)
+
     }
 
 }

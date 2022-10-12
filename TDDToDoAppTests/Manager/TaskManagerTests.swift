@@ -6,30 +6,90 @@
 //
 
 import XCTest
+@testable import TDDToDoApp
 
 final class TaskManagerTests: XCTestCase {
+    
+    var sut: TaskManager!
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        sut = TaskManager()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        sut = nil
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testInitTaskManagerWithZeroTasks() {
+        XCTAssertEqual(sut.tasksCount, 0)
+    }
+    
+    func testInitTaskManagerWithZeroDoneTasks() {
+        XCTAssertEqual(sut.doneTasksCount, 0)
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testAddTaskIncrementTasksCount() {
+        let task = Task(title: "foo")
+        sut.add(task: task)
+        
+        XCTAssertEqual(sut.tasksCount, 1)
     }
+    
+    func testTaskAtIndexIsAddedTask() {
+        let task = Task(title: "foo")
+        sut.add(task: task)
+        
+        let returnedTask = sut.task(at: 0)
+        
+        XCTAssertEqual(task.title, returnedTask.title)
+    }
+    
+    func testCheckTaskAtIndexChangesCounts() {
+        let task = Task(title: "foo")
+        sut.add(task: task)
+        
+        sut.checkTask(at: 0)
+        
+        XCTAssertEqual(sut.tasksCount, 0)
+        XCTAssertEqual(sut.doneTasksCount, 1)
+    }
+    
+    func testCheckedTaskRemovedFromTask() {
+        let firstTask = Task(title: "Foo")
+        let secondTask = Task(title: "Bar")
+        sut.add(task: firstTask)
+        sut.add(task: secondTask)
+        
+        sut.checkTask(at: 0)
+        
+        XCTAssertEqual(sut.task(at: 0), secondTask)
+    }
+    
+    func testDoneTaskAtReturnsCheckedTask() {
+        let task = Task(title: "Foo")
+        sut.add(task: task)
+        
+        sut.checkTask(at: 0)
+        let returnedTask = sut.doneTask(at: 0)
+        
+        XCTAssertEqual(task, returnedTask)
+    }
+    
+    func testRemoveAllResultsCountsBeZero() {
+        sut.add(task: Task(title: "Foo"))
+        sut.add(task: Task(title: "Bar"))
+        sut.checkTask(at: 0)
+        
+        sut.removeAll()
+        
+        XCTAssertTrue(sut.tasksCount == 0)
+        XCTAssertTrue(sut.doneTasksCount == 0)
+    }
+    
+    func testAddingSameObjectDoesNotIncrementCount() {
+        sut.add(task: Task(title: "Foo"))
+        sut.add(task: Task(title: "Foo"))
 
+        XCTAssertTrue(sut.tasksCount == 1)
+    }
 }
